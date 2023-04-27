@@ -13,7 +13,14 @@ Update PortfolioProject..NashvilleHousing
 SET SaleDateConverted = CONVERT(Date,SaleDate)
 
 Select SaleDateConverted
-From NashvilleHousing
+From PortfolioProject..NashvilleHousing
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 /* Populate Property Address data */
@@ -43,6 +50,11 @@ JOIN PortfolioProject..NashvilleHousing b
 Where a.PropertyAddress is null
 
 
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 -- Breaking Address into Individual Columns (Address, City, State) SUBSTRING method
 
 Select PropertyAddress
@@ -70,6 +82,11 @@ Add PropertySplitCity Nvarchar(255)
 
 Update NashvilleHousing
 SET PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) +1, LEN(PropertyAddress))
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 -- Spliting Address, City, and State PARSENAME method
@@ -105,6 +122,9 @@ Select *
 From NashvilleHousing
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 -- Change Y and N to Yes and No in "Sold as Vacant" field
 
 Select Distinct(SoldAsVacant), Count(SoldAsVacant)
@@ -127,7 +147,7 @@ CASE When SoldAsVacant = 'Y' THEN 'Yes'
 	 Else SoldAsVacant
 	 END
 
-
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Identify and remove Duplicates using CTE
 
@@ -143,20 +163,21 @@ SELECT *,
 					UniqueID
 					) row_num
 					
-
-From PortfolioProject..NashvilleHousing)
-
+From PortfolioProject..NashvilleHousing
+)
 Select * 
---DELETE can be used to remove this data if authorized to delete. If not, creation of a temporary table would work too for data anlysis purposes.
 From RowNumCTE
 Where row_num > 1
+Order by PropertyAddress
+
+--DELETE can be used to remove this data if authorized to delete. If not, creation of a temporary table would work too for data anlysis purposes.
+
+Select *
+From PortfolioProject.dbo.NashvilleHousing
 
 
-ALTER TABLE PortfolioProject..NashvilleHousing
-DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress
-
-ALTER TABLE PortfolioProject..NashvilleHousing
-DROP COLUMN SaleDate
+ALTER TABLE PortfolioProject.dbo.NashvilleHousing
+DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress, SaleDate
 
 Select *
 From PortfolioProject..NashvilleHousing
